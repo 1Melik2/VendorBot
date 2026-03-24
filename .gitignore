@@ -7,6 +7,12 @@ backend/sample_invoices/
 # Environment variables (credentials)
 .env
 
+# Saved browser session
+auth_session.json
+
+#vendor cage notes
+/backend/vendorcafe_notes.txt   
+
 # Python cache
 __pycache__/
 *.pyc
