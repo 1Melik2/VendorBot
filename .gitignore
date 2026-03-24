@@ -1,0 +1,15 @@
+# Virtual environment
+venv/
+
+# Sample invoices (private data)
+backend/sample_invoices/
+
+# Environment variables (credentials)
+.env
+
+# Python cache
+__pycache__/
+*.pyc
+
+# macOS
+.DS_Store
