@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import tempfile
 import os
 import shutil
+import asyncio
 
 from extractor import extract_invoice_data
 from bot import run_bot
@@ -44,7 +45,8 @@ async def upload_invoice(file: UploadFile = File(...)):
 
     try:
         invoice_data = extract_invoice_data(tmp_path)
-        run_bot(invoice_data, tmp_path)
+        # Run the sync bot in a separate thread (Playwright sync can't run in asyncio)
+        await asyncio.to_thread(run_bot, invoice_data, tmp_path)
         
     except Exception as e:
         os.unlink(tmp_path)

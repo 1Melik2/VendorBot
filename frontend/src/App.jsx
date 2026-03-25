@@ -43,17 +43,15 @@ function App() {
     const formData = new FormData()
     formData.append("file", file)
 
-    // YOUR TURN: Send the file to your backend using axios
-    // Hint:
-    // try {
-    //   const response = await axios.post("http://localhost:8000/api/upload-invoice", formData)
-    //   setStatus("success")
-    //   setMessage("Invoice uploaded successfully!")
-    //   setInvoiceData(response.data.invoice_data)
-    // } catch (error) {
-    //   setStatus("error")
-    //   setMessage("Upload failed: " + error.response?.data?.detail || error.message)
-    // }
+    try {
+      const response = await axios.post("http://localhost:8000/api/upload-invoice", formData)
+      setStatus("success")
+      setMessage("Invoice uploaded successfully!")
+      setInvoiceData(response.data.invoice_data)
+    } catch (error) {
+      setStatus("error")
+      setMessage("Upload failed: " + (error.response?.data?.detail || error.message))
+    }
   }
 
   return (
