@@ -1,0 +1,7 @@
+venv/
+__pycache__/
+*.pyc
+.env
+auth_session.json
+sample_invoices/
+vendorcafe_notes.txt
