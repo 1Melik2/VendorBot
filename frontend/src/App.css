@@ -1,0 +1,134 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #1a1a2e;
+  color: #e0e0e0;
+  min-height: 100vh;
+}
+
+.app {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+h1 {
+  font-size: 2.5rem;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  color: #888;
+  margin-bottom: 40px;
+}
+
+.dropzone {
+  border: 2px dashed #444;
+  border-radius: 12px;
+  padding: 40px 20px;
+  margin-bottom: 20px;
+  cursor: pointer;
+  transition: border-color 0.3s, background 0.3s;
+}
+
+.dropzone:hover {
+  border-color: #667eea;
+  background: rgba(102, 126, 234, 0.05);
+}
+
+.dropzone p {
+  color: #aaa;
+  margin-bottom: 16px;
+}
+
+/* Hide the default file input */
+#file-input {
+  display: none;
+}
+
+.browse-btn {
+  display: inline-block;
+  padding: 10px 24px;
+  background: #2a2a3e;
+  border: 1px solid #444;
+  border-radius: 8px;
+  color: #ccc;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.browse-btn:hover {
+  background: #3a3a5e;
+}
+
+.upload-btn {
+  width: 100%;
+  padding: 14px;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  cursor: pointer;
+  transition: opacity 0.3s, transform 0.1s;
+  margin-bottom: 20px;
+}
+
+.upload-btn:hover {
+  opacity: 0.9;
+  transform: scale(1.01);
+}
+
+.upload-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.status {
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.status.uploading {
+  background: rgba(102, 126, 234, 0.1);
+  color: #667eea;
+}
+
+.status.success {
+  background: rgba(72, 187, 120, 0.1);
+  color: #48bb78;
+}
+
+.status.error {
+  background: rgba(245, 101, 101, 0.1);
+  color: #f56565;
+}
+
+.result {
+  text-align: left;
+  background: #2a2a3e;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #444;
+}
+
+.result h3 {
+  color: #667eea;
+  margin-bottom: 12px;
+}
+
+.result p {
+  padding: 6px 0;
+  border-bottom: 1px solid #333;
+}
