@@ -1,6 +1,11 @@
 services:
   backend: 
     build: ./backend
+
+    #UNCOMMENT WHEN READY TO DEPLOY
+    #environment:
+    #  - DOCKER_ENV=true
+
     ports:
       - "8000:8000"
     
