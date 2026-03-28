@@ -165,10 +165,18 @@ def run_bot(invoice_data: dict, pdf_path: str):
         find_and_click_po(page, invoice_data["po_number"])
         handle_create_invoice_popups(page)
         fill_and_submit_invoice(page, invoice_data, pdf_path)
+        # Pause so user can review and manually click Submit
+        # If user closes the browser/tab, that's fine — catch the error
+        try:
+            page.wait_for_timeout(120000)  # 2 min to review and submit
+        except Exception:
+            pass  # User closed browser — they submitted manually
 
-        page.wait_for_timeout(50000)  # Pause so you can see the result
         print("Done!")
-        browser.close()
+        try:
+            browser.close()
+        except Exception:
+            pass  # Browser already closed
 
 
 if __name__ == "__main__":

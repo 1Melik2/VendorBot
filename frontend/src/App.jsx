@@ -3,56 +3,72 @@ import axios from 'axios'
 import './App.css'
 
 function App() {
-  // State variables — these control what the UI shows
-  const [file, setFile] = useState(null)           // the selected PDF file
-  const [status, setStatus] = useState("")          // "uploading", "success", "error"
-  const [message, setMessage] = useState("")        // status message to display
-  const [invoiceData, setInvoiceData] = useState(null) // extracted data from backend
+  const [file, setFile] = useState(null)
+  const [step, setStep] = useState("")            // "checking", "pending", "uploading", "success", "skipped", "error"
+  const [message, setMessage] = useState("")
+  const [invoiceData, setInvoiceData] = useState(null)
   const [pendingPOs, setPendingPOs] = useState(null)
   const [loadingPOs, setLoadingPOs] = useState(false)
 
-  // Called when user selects a file
   const handleFileChange = (e) => {
     setFile(e.target.files[0])
-    setStatus("")
+    setStep("")
     setMessage("")
+    setInvoiceData(null)
   }
 
-  // Called when user drops a file onto the drop zone
   const handleDrop = (e) => {
     e.preventDefault()
     const droppedFile = e.dataTransfer.files[0]
     if (droppedFile && droppedFile.name.endsWith(".pdf")) {
       setFile(droppedFile)
-      setStatus("")
+      setStep("")
       setMessage("")
+      setInvoiceData(null)
     } else {
       setMessage("Please drop a PDF file")
     }
   }
 
-  // Called when user clicks "Upload"
   const handleUpload = async () => {
     if (!file) {
       setMessage("Please select a file first")
       return
     }
 
-    setStatus("uploading")
-    setMessage("Processing invoice...")
-
-    // FormData is how you send files over HTTP
     const formData = new FormData()
     formData.append("file", file)
 
+    // Step 1: Check if PO is pending
+    setStep("checking")
+    setMessage("📄 Extracting PO number & checking VendorCafe...")
+    setInvoiceData(null)
+
     try {
-      const response = await axios.post("http://localhost:8000/api/upload-invoice", formData)
-      setStatus("success")
-      setMessage("Invoice uploaded successfully!")
-      setInvoiceData(response.data.invoice_data)
+      const checkRes = await axios.post("http://localhost:8000/api/check-invoice", formData)
+      setInvoiceData(checkRes.data.invoice_data)
+
+      if (!checkRes.data.is_pending) {
+        setStep("skipped")
+        setMessage(checkRes.data.message)
+        return
+      }
+
+      // Step 2: PO is pending — upload it
+      setStep("uploading")
+      setMessage(`✅ PO #${checkRes.data.invoice_data.po_number} is pending — uploading to VendorCafe...`)
+
+      // Need to re-send the file since it's a new request
+      const uploadForm = new FormData()
+      uploadForm.append("file", file)
+
+      const uploadRes = await axios.post("http://localhost:8000/api/upload-invoice", uploadForm)
+      setStep("success")
+      setMessage(uploadRes.data.message)
+
     } catch (error) {
-      setStatus("error")
-      setMessage("Upload failed: " + (error.response?.data?.detail || error.message))
+      setStep("error")
+      setMessage("Failed: " + (error.response?.data?.detail || error.message))
     }
   }
 
@@ -74,7 +90,7 @@ function App() {
         <p className="subtitle">Automated Invoice Upload for VendorCafe</p>
       </div>
 
-      {/* Drop zone area */}
+      {/* Drop zone */}
       <div
         className={`dropzone ${file ? 'dropzone-active' : ''}`}
         onDrop={handleDrop}
@@ -88,15 +104,10 @@ function App() {
         ) : (
           <>
             <span className="upload-icon">📁</span>
-            <p>Drag and drop a PDF here, or click below to browse</p>
+            <p>Drag and drop an invoice PDF here, or click below to browse</p>
           </>
         )}
-        <input
-          type="file"
-          accept=".pdf"
-          onChange={handleFileChange}
-          id="file-input"
-        />
+        <input type="file" accept=".pdf" onChange={handleFileChange} id="file-input" />
         <label htmlFor="file-input" className="browse-btn">Browse Files</label>
       </div>
 
@@ -104,20 +115,25 @@ function App() {
       <button
         className="upload-btn"
         onClick={handleUpload}
-        disabled={!file || status === "uploading"}
+        disabled={!file || step === "checking" || step === "uploading"}
       >
-        {status === "uploading" ? "Processing..." : "Upload Invoice"}
+        {step === "checking" ? "Checking PO..." : step === "uploading" ? "Uploading..." : "Upload Invoice"}
       </button>
 
-      {/* Status message */}
-      {message && (
-        <p className={`status ${status}`}>{message}</p>
+      {/* Progress steps */}
+      {step && (
+        <div className={`status ${step}`}>
+          <p>{message}</p>
+          {step === "uploading" && (
+            <p className="status-hint">Review the form in the browser, then click Submit. Close the tab when done.</p>
+          )}
+        </div>
       )}
 
-      {/* Show extracted data on success */}
-      {invoiceData && (
+      {/* Show extracted data */}
+      {invoiceData && (step === "success" || step === "skipped") && (
         <div className="result">
-          <h3>Extracted Data</h3>
+          <h3>{step === "skipped" ? "⊘ Invoice Skipped" : "✓ Invoice Uploaded"}</h3>
           <p>PO Number: {invoiceData.po_number}</p>
           <p>Invoice #: {invoiceData.invoice_num}</p>
           <p>Date: {invoiceData.date}</p>

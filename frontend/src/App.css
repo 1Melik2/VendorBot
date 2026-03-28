@@ -189,6 +189,38 @@ h1 {
   border: 1px solid rgba(245, 101, 101, 0.2);
 }
 
+.status.skipped {
+  background: rgba(236, 201, 75, 0.1);
+  color: #ecc94b;
+  border: 1px solid rgba(236, 201, 75, 0.2);
+}
+
+.status.checking {
+  background: rgba(102, 126, 234, 0.1);
+  color: #667eea;
+  border: 1px solid rgba(102, 126, 234, 0.2);
+}
+
+.status.uploading {
+  background: rgba(56, 178, 172, 0.1);
+  color: #38b2ac;
+  border: 1px solid rgba(56, 178, 172, 0.2);
+}
+
+.status-hint {
+  font-size: 0.8rem;
+  color: #888;
+  margin-top: 8px;
+}
+
+/* ── File List ── */
+
+.file-list {
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 4px;
+}
+
 /* ── Extracted Data Result ── */
 
 .result {
@@ -211,6 +243,76 @@ h1 {
   padding: 8px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   font-size: 0.95rem;
+}
+
+/* ── Batch Upload Results ── */
+
+.batch-results {
+  text-align: left;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 24px;
+  border-radius: 14px;
+  border: 1px solid #222;
+  margin-bottom: 20px;
+}
+
+.batch-results h3 {
+  color: #667eea;
+  margin-bottom: 16px;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.batch-item {
+  padding: 12px 14px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  border: 1px solid #222;
+}
+
+.batch-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.batch-file {
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.batch-badge {
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge-uploaded {
+  background: rgba(72, 187, 120, 0.15);
+  color: #48bb78;
+}
+
+.badge-skipped {
+  background: rgba(236, 201, 75, 0.15);
+  color: #ecc94b;
+}
+
+.badge-error {
+  background: rgba(245, 101, 101, 0.15);
+  color: #f56565;
+}
+
+.batch-po {
+  color: #667eea;
+  font-size: 0.85rem;
+  margin-right: 12px;
+}
+
+.batch-reason {
+  color: #888;
+  font-size: 0.85rem;
 }
 
 /* ── Pending POs Section ── */
