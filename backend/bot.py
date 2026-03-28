@@ -172,7 +172,7 @@ def run_bot(invoice_data: dict, pdf_path: str):
 
 
 if __name__ == "__main__":
-    # Test with sample data from your extractor
+    # Test with sample data from  extractor
     test_data = {
         "po_number": "105126",
         "invoice_num": "1208",

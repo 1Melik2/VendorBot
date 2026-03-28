@@ -7,6 +7,7 @@ import asyncio
 
 from extractor import extract_invoice_data
 from bot import run_bot
+from scraper import scrape_pending_pos
 
 #create the FastAPI app
 app = FastAPI(title="VendorBot API")
@@ -56,3 +57,10 @@ async def upload_invoice(file: UploadFile = File(...)):
     os.unlink(tmp_path)
     return {"status": "success", "invoice_data": invoice_data}
 
+@app.get("/api/pending-pos")
+async def get_pending_pos():
+    try:
+        pos = await asyncio.to_thread(scrape_pending_pos)
+        return {"status": "success", "pos": pos}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
