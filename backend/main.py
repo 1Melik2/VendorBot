@@ -38,11 +38,11 @@ async def upload_invoice(file: UploadFile = File(...)):
         raise HTTPException(status_code=400, detail="Only PDF files are allowed")
 
 
-    # Save the uploaded PDF to a temporary file
-
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
+    # Save the uploaded PDF with its original filename (so VendorCafe shows the right name)
+    tmp_dir = tempfile.mkdtemp()
+    tmp_path = os.path.join(tmp_dir, file.filename)
+    with open(tmp_path, "wb") as tmp:
         shutil.copyfileobj(file.file, tmp)
-        tmp_path = tmp.name
 
     try:
         invoice_data = extract_invoice_data(tmp_path)
@@ -50,11 +50,11 @@ async def upload_invoice(file: UploadFile = File(...)):
         await asyncio.to_thread(run_bot, invoice_data, tmp_path)
         
     except Exception as e:
-        os.unlink(tmp_path)
+        shutil.rmtree(tmp_dir)
         raise HTTPException(status_code=500, detail=str(e))
     
     #clean up the temp file and return the result
-    os.unlink(tmp_path)
+    shutil.rmtree(tmp_dir)
     return {"status": "success", "invoice_data": invoice_data}
 
 @app.get("/api/pending-pos")
