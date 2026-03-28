@@ -8,6 +8,8 @@ function App() {
   const [status, setStatus] = useState("")          // "uploading", "success", "error"
   const [message, setMessage] = useState("")        // status message to display
   const [invoiceData, setInvoiceData] = useState(null) // extracted data from backend
+  const [pendingPOs, setPendingPOs] = useState(null)
+  const [loadingPOs, setLoadingPOs] = useState(false)
 
   // Called when user selects a file
   const handleFileChange = (e) => {
@@ -54,21 +56,40 @@ function App() {
     }
   }
 
+  const handleFetchPOs = async () => {
+    setLoadingPOs(true)
+    try {
+      const invoices = await axios.get("http://localhost:8000/api/pending-pos")
+      setPendingPOs(invoices.data.pos)
+    } catch (error) {
+      setMessage("Failed to fetch POs: " + (error.response?.data?.detail || error.message))
+    }
+    setLoadingPOs(false)
+  }
+
   return (
     <div className="app">
-      <h1>VendorBot</h1>
-      <p className="subtitle">Automated Invoice Upload for VendorCafe</p>
+      <div className="header">
+        <h1>⚡ VendorBot</h1>
+        <p className="subtitle">Automated Invoice Upload for VendorCafe</p>
+      </div>
 
       {/* Drop zone area */}
       <div
-        className="dropzone"
+        className={`dropzone ${file ? 'dropzone-active' : ''}`}
         onDrop={handleDrop}
         onDragOver={(e) => e.preventDefault()}
       >
         {file ? (
-          <p>Selected: {file.name}</p>
+          <div className="file-selected">
+            <span className="file-icon">📄</span>
+            <p>{file.name}</p>
+          </div>
         ) : (
-          <p>Drag and drop a PDF here, or click below to browse</p>
+          <>
+            <span className="upload-icon">📁</span>
+            <p>Drag and drop a PDF here, or click below to browse</p>
+          </>
         )}
         <input
           type="file"
@@ -103,6 +124,38 @@ function App() {
           <p>Total: ${invoiceData.total}</p>
         </div>
       )}
+
+      {/* Pending POs Section */}
+      <hr className="section-divider" />
+      <h2 className="section-title">📋 Pending Purchase Orders</h2>
+      <button className="check-btn" onClick={handleFetchPOs} disabled={loadingPOs}>
+        {loadingPOs ? "Checking VendorCafe..." : "Check Pending POs"}
+      </button>
+
+      {pendingPOs && pendingPOs.length > 0 && (
+        <p className="po-count">
+          {pendingPOs.length} invoice{pendingPOs.length > 1 ? 's' : ''} need uploading
+        </p>
+      )}
+
+      {pendingPOs && pendingPOs.length > 0 && pendingPOs.map((po, i) => (
+        <div className="po-card" key={i}>
+          <div className="po-header">
+            <span className="po-number">PO #{po.po_number}</span>
+            <span className="po-pending">Pending: ${po.pending_amount}</span>
+          </div>
+          <div className="po-details">
+            <span>{po.property_name}</span>
+            <span>Unit {po.unit}</span>
+            <span>Amount: ${po.po_amount}</span>
+            <span>{po.order_date}</span>
+          </div>
+        </div>
+      ))}
+
+      <footer className="footer">
+        <p>VendorBot v1.0</p>
+      </footer>
     </div>
   )
 }
