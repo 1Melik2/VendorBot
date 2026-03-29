@@ -45,7 +45,7 @@ function App() {
     setInvoiceData(null)
 
     try {
-      const checkRes = await axios.post("http://localhost:8000/api/check-invoice", formData)
+      const checkRes = await axios.post("/api/check-invoice", formData)
       setInvoiceData(checkRes.data.invoice_data)
 
       if (!checkRes.data.is_pending) {
@@ -62,7 +62,7 @@ function App() {
       const uploadForm = new FormData()
       uploadForm.append("file", file)
 
-      const uploadRes = await axios.post("http://localhost:8000/api/upload-invoice", uploadForm)
+      const uploadRes = await axios.post("/api/upload-invoice", uploadForm)
       setStep("success")
       setMessage(uploadRes.data.message)
 
@@ -75,7 +75,7 @@ function App() {
   const handleFetchPOs = async () => {
     setLoadingPOs(true)
     try {
-      const invoices = await axios.get("http://localhost:8000/api/pending-pos")
+      const invoices = await axios.get("/api/pending-pos")
       setPendingPOs(invoices.data.pos)
     } catch (error) {
       setMessage("Failed to fetch POs: " + (error.response?.data?.detail || error.message))
